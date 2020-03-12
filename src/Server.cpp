@@ -25,13 +25,38 @@
  * @param file - the file whose length we want to query
  * @return length of the file in bytes
  */
-int get_file_length(ifstream *file){
+int get_file_length(ifstream *file) {
+    int len = 0;
+    char x;
+    while (*file >> x) {
+        len++;
+    }
+    return sqrt(len);
 }
 
 
 void Server::initialize(unsigned int board_size,
                         string p1_setup_board,
                         string p2_setup_board){
+    // initialize the files and try to open them
+    ifstream board1;
+    ifstream board2;
+    board1.open(p1_setup_board);
+    board2.open(p2_setup_board);
+    // if either of them failed to open, throw anything
+    if (!board1 || !board2) {
+        throw ServerException("One of the board files failed to open");
+    }
+
+    int lenb1 = get_file_length(&board1);
+    int lenb2 = get_file_length(&board2);
+    // check the board dimension that were passed in
+    if (board_size != BOARD_SIZE) {
+        throw ServerException("Incorrect board_size given");
+    }
+    if (lenb1 != BOARD_SIZE || lenb2 != BOARD_SIZE) {
+        throw ServerException("At least one of the files is not the correct size");
+    }
 }
 
 

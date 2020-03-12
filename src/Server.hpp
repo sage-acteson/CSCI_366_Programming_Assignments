@@ -21,6 +21,7 @@
 #include <fstream>
 #include <exception>
 #include <cstdio>
+#include <math.h>
 
 #include <cereal/archives/json.hpp>
 
