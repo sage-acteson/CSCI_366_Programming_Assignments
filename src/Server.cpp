@@ -57,6 +57,8 @@ void Server::initialize(unsigned int board_size,
     if (lenb1 != BOARD_SIZE || lenb2 != BOARD_SIZE) {
         throw ServerException("At least one of the files is not the correct size");
     }
+    board1.close();
+    board2.close();
 }
 
 

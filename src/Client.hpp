@@ -18,6 +18,7 @@
 #include <fstream>
 #include <cereal/archives/json.hpp>
 #include <cereal/types/vector.hpp>
+#include <map>
 
 using namespace std;
 
@@ -51,7 +52,7 @@ public:
 
 class Client {
 private:
-    unsigned int player;
+    unsigned int stored_player;
     string board_name;
 public:
     unsigned int board_size;
