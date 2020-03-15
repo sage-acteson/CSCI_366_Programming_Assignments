@@ -70,7 +70,7 @@ int Client::get_result() {
 
         remove((fname).c_str());
 
-        if( res >= -1 || res <= 1) {
+        if( res >= -1 && res <= 1) {
             return res;
         } else {
             throw ClientException("Unable to get the result");
@@ -125,13 +125,46 @@ int Client::get_result() {
 
 
 void Client::update_action_board(int result, unsigned int x, unsigned int y) {
-    // TODO read up until the coordinate
-    // switch the coordinate for the result
-    // read until the end of the file
-    // output into the file?
+    cout << "UPDATING the action board" << endl;
+    string fname = "player_" +to_string(stored_player) + ".action_board.json";
+    // read in the action board
+    ifstream in_board_ifs(fname);
+    //-------------------------------
+    // not sure why this isn't working yet
+    // __________________________
+    vector<vector<int>> board(board_size);
+    {
+        cereal::JSONInputArchive in_arch(in_board_ifs);
+        in_arch(cereal::make_nvp("board",board));
+    }
+    in_board_ifs.close();
+
+    board[x][y] = result;
+
+
+    //in_board_ifs.close();
+    // update the appropriate value in the action board
+    //board[x+1][y+1] = result;
+    //for(int i = 0; i <board_size; i++) {
+    //    for( int j = 0; j < board_size; j++) {
+    //        cout << board[i][j];
+    //    }
+    //   cout << endl;
+    //}
+
+    // write the updated board back to the file
+    ofstream out_board_ofs(fname);
+
+    {
+        cereal::JSONOutputArchive out_arch(out_board_ofs);
+        out_arch(board);
+    }
+    out_board_ofs.flush();
+
+
 }
 
 
 string Client::render_action_board(){
-    return "THE NEW ACTION BOARD";
+    return "THE NEW ACTION BOARD\n";
 }
