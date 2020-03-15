@@ -107,7 +107,8 @@ int Server::process_shot(unsigned int player) {
     unsigned int x;
     unsigned int y;
     // check if there is a file to read in
-    ifstream in_shot_file("player_"+to_string(player)+".shot.json");
+    string fname_in = ("player_"+to_string(player)+".shot.json");
+    ifstream in_shot_file(fname_in);
     if(in_shot_file) {
         // extract coordinates
         stringstream in_stream;
@@ -116,7 +117,6 @@ int Server::process_shot(unsigned int player) {
             cereal::JSONInputArchive shot_in(in_stream);
             shot_in(CEREAL_NVP(x), CEREAL_NVP(y));
         }
-
         // call evaluate_shot
         int eval;
         eval = evaluate_shot(player, x, y);
@@ -125,10 +125,13 @@ int Server::process_shot(unsigned int player) {
         string fname = "player_" + to_string(player) + ".result.json";
         ofstream writeFile(fname);
         cereal::JSONOutputArchive out_arch(writeFile);
-        out_arch(CEREAL_NVP(result));
+        out_arch(cereal::make_nvp("result",eval));
+
+        writeFile.flush();
 
         in_shot_file.close();
         // delete the shot file HERE
+        remove((fname_in).c_str());
         return SHOT_FILE_PROCESSED;
     }
 
