@@ -60,13 +60,78 @@ bool Client::result_available() {
 
 int Client::get_result() {
 
+    if(result_available()) {
+        int res;
+        string fname = "player_" + to_string(stored_player) + ".result.json";
+        ifstream in_result_ifs(fname);
+        // possible check if the file is good?
+        cereal::JSONInputArchive result_in(in_result_ifs);
+        result_in(res);
+
+        remove((fname).c_str());
+
+        if( res >= -1 || res <= 1) {
+            return res;
+        } else {
+            throw ClientException("Unable to get the result");
+        }
+    }
+    else {
+        throw ClientException("No results to get");
+    }
+
+
+    /*
+    // deserialize
+    string fname = "player_" + to_string(stored_player) + ".result.json";
+    ifstream in_result_file(fname);
+    string result;
+    stringstream in_stream;
+    in_stream << in_result_file.rdbuf();
+    {
+        cereal::JSONInputArchive in_result(in_stream);
+        in_result(CEREAL_NVP(result));
+    }
+    cout << "Resulting result:|" << result << "|" << endl;
+    // determine value
+    int response;
+    // TODO try casting to an int
+    if(result == to_string(HIT)) {
+        response = HIT;
+    }
+    else if(result == to_string(MISS)) {
+        response = MISS;
+    } else {
+        response = OUT_OF_BOUNDS;
+    }
+
+    // cleanup here?
+
+    // TODO delete the json file
+
+    //return value
+    in_result_file.close();
+    cout << "REsponse: " << response <<endl;
+    char filename[80];
+    strcpy (filename, "player_");
+    strcat (filename, to_string(stored_player));
+    if(remove(filename) != 0) {
+        cout << "File deletion failed" << endl;
+    }
+    return response;
+     */
 }
 
 
 
 void Client::update_action_board(int result, unsigned int x, unsigned int y) {
+    // TODO read up until the coordinate
+    // switch the coordinate for the result
+    // read until the end of the file
+    // output into the file?
 }
 
 
 string Client::render_action_board(){
+    return "THE NEW ACTION BOARD";
 }
