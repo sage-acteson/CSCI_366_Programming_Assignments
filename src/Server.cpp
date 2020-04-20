@@ -32,14 +32,52 @@ int get_file_length(ifstream *file){
 void Server::initialize(unsigned int board_size,
                         string p1_setup_board,
                         string p2_setup_board){
+    // ensure the provided board size is correct
+    if(board_size != BOARD_SIZE) {
+        throw ServerException("The provided board size does not match the global constant 'board size'");
+    } else {
+        this->board_size = board_size;
+    }
+    // ensure the provided board names are not null
+    if(p1_setup_board.size() < 1 || p2_setup_board.size() < 1) {
+        throw ServerException("At least on of the file names provided is too short");
+    }
+
+    // instantiate the boards
+    this->p1_setup_board = scan_setup_board(p1_setup_board);
+    this->p2_setup_board = new BitArray2D(board_size, board_size);
 }
 
 
 Server::~Server() {
+    delete this->p1_setup_board;
+    delete this->p2_setup_board;
 }
 
 
 BitArray2D *Server::scan_setup_board(string setup_board_name){
+    BitArray2D* board = new BitArray2D(board_size, board_size); // TODO more dynamic by reading in sizes from file, but should throw and error if they don't match
+    ifstream setup_board;
+    setup_board.open(setup_board_name); // open the setup board file to process the information
+    // TODO check that the board opened
+    // TODO get the length of the board and compare it to the board size
+    char c;
+    int count = 0;
+    int row = 0;
+    int col = 0;
+    while(setup_board>>c) {
+        for(char d : SHIPS) {
+            if (c == d) {
+                row = count / 10;
+                col = count % 10;
+                board->set(row,col);
+                //cout << c << " at " << row << "," << col << "\n";
+            }
+        }
+        count++;
+    }
+    return board;
+
 }
 
 int Server::evaluate_shot(unsigned int player, unsigned int x, unsigned int y) {
