@@ -85,7 +85,7 @@ int Client::get_result() {
 
 
 void Client::update_action_board(int result, unsigned int x, unsigned int y) {
-    cout << "Updating the action board" << endl;
+    //cout << "Updating the action board" << endl;
     string fname = "player_" + to_string(this->player) + ".action_board.json";
     ifstream in_action_board(fname); // init and open
     vector<vector<int>> board(board_size);
@@ -93,7 +93,7 @@ void Client::update_action_board(int result, unsigned int x, unsigned int y) {
         cereal::JSONInputArchive action_in(in_action_board); // setup archive to read in the file
         action_in(CEREAL_NVP(board)); // read in from the archive
     }
-    cout << "Read in the action board" << endl;
+    //cout << "Read in the action board" << endl;
     board[x][y] = result; // update value
     in_action_board.close(); // close input stream
     ofstream out_action_board(fname); // open output stream
@@ -107,5 +107,21 @@ void Client::update_action_board(int result, unsigned int x, unsigned int y) {
 
 
 string Client::render_action_board(){
-    return "Hopefully this fixes that error?\n";
+    string res = "\n"; // start string to return
+    string fname = "player_" + to_string(this->player) + ".action_board.json";
+    ifstream in_action_board(fname);
+    vector<vector<int>> board(board_size);
+    { // read in file through the JSON archive
+        cereal::JSONInputArchive action_in(in_action_board);
+        action_in(CEREAL_NVP(board));
+    }
+    // iterate through the board and add it to the string that will be returned
+    for(int i=0; i < board_size; i++) {
+        for(int j=0; j < board_size; j++) {
+            res += to_string(board[i][j]);
+        }
+        res += "\n";
+    }
+
+    return res;
 }
