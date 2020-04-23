@@ -22,8 +22,9 @@ Client::~Client() {
 
 
 void Client::initialize(unsigned int player, unsigned int board_size){
-    // save the player
+    // save the player and board size
     this->player = player;
+    this->board_size = board_size;
 
     // create and initialize the action board
     ofstream writeFile("player_"+ to_string(player)+".action_board.json"); // start write file
@@ -84,8 +85,27 @@ int Client::get_result() {
 
 
 void Client::update_action_board(int result, unsigned int x, unsigned int y) {
+    cout << "Updating the action board" << endl;
+    string fname = "player_" + to_string(this->player) + ".action_board.json";
+    ifstream in_action_board(fname); // init and open
+    vector<vector<int>> board(board_size);
+    {
+        cereal::JSONInputArchive action_in(in_action_board); // setup archive to read in the file
+        action_in(CEREAL_NVP(board)); // read in from the archive
+    }
+    cout << "Read in the action board" << endl;
+    board[x][y] = result; // update value
+    in_action_board.close(); // close input stream
+    ofstream out_action_board(fname); // open output stream
+    {
+        cereal::JSONOutputArchive action_out(out_action_board); // setup archive to write out
+        action_out(CEREAL_NVP(board)); // use archive to write out updated board
+    }
+    out_action_board.close();
+
 }
 
 
 string Client::render_action_board(){
+    return "Hopefully this fixes that error?\n";
 }
