@@ -51,14 +51,29 @@ get_bit_elem:
         ; rcx contains col
 
         ; add your code here - for now returning 0
+        ; calculate index
         imul rdx, rsi       ; row_width * row (first part of offset)
-        add rcx, rdx        ; ^ + column (second part of offset) - in rcx because cl (for sign extension) is second part of rcx
-        mov rax, 1          ; init mask
-        sal rax, cl         ; shift to create mask
-        and rax, [rdi]      ; apply mask
-        cmp rax, 0          ; if larger than zero then bit is 1
-        setg al             ; set flag
-        movsx rax, al       ; move and sign extend flag into all of rax for returning
+        add rdx, rcx        ; ^ + column (second part of offset)
+        ; calculate byte offset
+        mov rsi, rdx        ; copy index
+        sar rsi, 3          ; /8 for offset
+        ; calculate bit offset
+        mov rax, rsi        ; copy byte offset
+        sal rax, 3          ; *8
+        sub rdx, rax        ; get bit offset
+        ; make mask
+        mov rcx, 8          ; init shift val for mask
+        sub rcx, rdx        ; calc shift
+        sub rcx, 1
+        mov rdx, 1          ; init mask
+        sal rdx, cl         ; shift mask to its final form
+        ; apply mask
+        and rdx, [rdi+rsi]  ; apply mask
+        ; determine result
+        cmp rdx, 0          ; if result is larger than 0
+        setg al             ; set something
+        movsx rax, al       ; move and sign extend for returning
+
 
         mov rsp, rbp        ; restore stack pointer to before we pushed parameters onto the stack
         pop rbp             ; remove rbp from the stack to restore rsp to initial value

@@ -66,7 +66,7 @@ BitArray2D *Server::scan_setup_board(string setup_board_name){
     int row = 0;
     int col = 0;
     while(setup_board>>c) {
-        cout << c;
+        //cout << c;
         for(char d : SHIPS) {
             if (c == d) {
                 row = count / 10;
@@ -78,7 +78,7 @@ BitArray2D *Server::scan_setup_board(string setup_board_name){
         }
         count++;
     }
-    board->get(0,0);
+    board->get(2,2);
     return board;
 
 }
