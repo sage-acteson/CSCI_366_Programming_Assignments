@@ -66,16 +66,19 @@ BitArray2D *Server::scan_setup_board(string setup_board_name){
     int row = 0;
     int col = 0;
     while(setup_board>>c) {
+        cout << c;
         for(char d : SHIPS) {
             if (c == d) {
                 row = count / 10;
                 col = count % 10;
                 board->set(row,col);
                 //cout << c << " at " << row << "," << col << "\n";
+                break;
             }
         }
         count++;
     }
+    board->get(0,0);
     return board;
 
 }
